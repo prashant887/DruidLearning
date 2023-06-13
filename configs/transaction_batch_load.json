@@ -1,0 +1,46 @@
+{
+  "type" : "index_parallel",
+  "spec" : {
+    "dataSchema" : {
+      "dataSource" : "transaction_batch",
+      "dimensionsSpec" : {
+        "dimensions" : [
+          "country",
+          { "name": "product_id", "type": "long" },
+          { "name": "quantity", "type": "long" },
+          { "name": "price", "type": "float" }
+        ]
+      },
+      "timestampSpec": {
+        "column": "transaction_date",
+        "format": "iso"
+      },
+      "metricsSpec" : [],
+      "granularitySpec" : {
+        "type" : "uniform",
+        "segmentGranularity" : "hour",
+        "queryGranularity" : "minute",
+        "rollup" : false
+      }
+    },
+    "ioConfig" : {
+      "type" : "index_parallel",
+      "inputSource" : {
+        "type" : "local",
+        "baseDir" : "/Users/pl/DruidLearning/druid_source/",
+        "filter" : "druid_transaction.json"
+      },
+      "inputFormat" :  {
+        "type": "json"
+      },
+      "appendToExisting" : false
+    },
+    "tuningConfig" : {
+      "type" : "index_parallel",
+      "partitionsSpec": {
+        "type": "dynamic"
+      },
+      "maxRowsInMemory" : 25000
+    }
+  }
+}

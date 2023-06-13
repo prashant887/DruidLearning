@@ -1,0 +1,74 @@
+{
+  "type": "kafka",
+  "spec": {
+    "ioConfig": {
+      "type": "kafka",
+      "consumerProperties": {
+        "bootstrap.servers": "localhost:9092"
+      },
+      "topic": "transaction-topic",
+      "inputFormat": {
+        "type": "json"
+      },
+      "useEarliestOffset": true
+    },
+    "tuningConfig": {
+      "type": "kafka"
+    },
+    "dataSchema": {
+      "dataSource": "transaction_stream_agg",
+      "timestampSpec": {
+        "column": "transaction_date",
+        "format": "iso"
+      },
+      "transformSpec": {
+        "transforms": [
+          {
+            "type": "expression",
+            "name": "total",
+            "expression": "quantity*price"
+          }
+        ]
+      },
+      "dimensionsSpec": {
+        "dimensions": [
+          "country",
+          {
+            "type": "long",
+            "name": "product_id"
+          }
+        ]
+      },
+      "metricsSpec" : [
+        {
+            "type": "count",
+            "name": "count"
+          },
+          {
+            "type": "floatSum",
+            "name": "total_sum",
+            "fieldName": "total",
+            "expression": null
+          },
+          {
+            "type": "longSum",
+            "name": "quantity_sum",
+            "fieldName": "quantity",
+            "expression": null
+          },
+          {
+            "type": "floatSum",
+            "name": "price_sum",
+            "fieldName": "price",
+            "expression": null
+          }
+      ]
+      ,
+      "granularitySpec": {
+        "queryGranularity": "second",
+        "rollup": true,
+        "segmentGranularity": "day"
+      }
+    }
+  }
+}

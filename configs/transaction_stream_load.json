@@ -1,0 +1,48 @@
+{
+  "type": "kafka",
+  "spec": {
+    "ioConfig": {
+      "type": "kafka",
+      "consumerProperties": {
+        "bootstrap.servers": "localhost:9092"
+      },
+      "topic": "transaction-topic",
+      "inputFormat": {
+        "type": "json"
+      },
+      "useEarliestOffset": true
+    },
+    "tuningConfig": {
+      "type": "kafka"
+    },
+    "dataSchema": {
+      "dataSource": "transaction_stream",
+      "timestampSpec": {
+        "column": "transaction_date",
+        "format": "iso"
+      },
+      "dimensionsSpec": {
+        "dimensions": [
+          "country",
+          {
+            "type": "long",
+            "name": "product_id"
+          },
+          {
+            "type": "long",
+            "name": "quantity"
+          },
+          {
+            "type": "double",
+            "name": "price"
+          }
+        ]
+      },
+      "granularitySpec": {
+        "queryGranularity": "none",
+        "rollup": false,
+        "segmentGranularity": "day"
+      }
+    }
+  }
+}

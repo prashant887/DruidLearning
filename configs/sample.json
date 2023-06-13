@@ -1,0 +1,85 @@
+{
+  "type": "index_parallel",
+  "spec": {
+    "ioConfig": {
+      "type": "index_parallel",
+      "inputSource": {
+        "type": "local",
+        "baseDir": "/Users/pl/DruidLearning/druid_source",
+        "filter": "druid_transaction.json"
+      },
+      "inputFormat": {
+        "type": "json",
+        "featureSpec": {
+          "ALLOW_COMMENTS": true,
+          "ALLOW_YAML_COMMENTS": true,
+          "ALLOW_UNQUOTED_FIELD_NAMES": true,
+          "ALLOW_SINGLE_QUOTES": true,
+          "ALLOW_UNQUOTED_CONTROL_CHARS": true,
+          "ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER": true,
+          "ALLOW_NUMERIC_LEADING_ZEROS": true,
+          "ALLOW_NON_NUMERIC_NUMBERS": true,
+          "ALLOW_MISSING_VALUES": true,
+          "ALLOW_TRAILING_COMMA": true
+        }
+      }
+    },
+    "tuningConfig": {
+      "type": "index_parallel",
+      "partitionsSpec": {
+        "type": "hashed"
+      },
+      "forceGuaranteedRollup": true
+    },
+    "dataSchema": {
+      "dataSource": "druid_transaction",
+      "timestampSpec": {
+        "column": "transaction_date",
+        "format": "iso"
+      },
+      "granularitySpec": {
+        "queryGranularity": "minute",
+        "rollup": true
+      },
+      "dimensionsSpec": {
+        "dimensions": [
+          "country",
+          {
+            "type": "long",
+            "name": "product_id"
+          }
+        ]
+      },
+      "transformSpec": {
+        "transforms": [
+          {
+            "type": "expression",
+            "name": "total_price",
+            "expression": "quantity*price"
+          }
+        ]
+      },
+      "metricsSpec": [
+        {
+          "name": "count",
+          "type": "count"
+        },
+        {
+          "name": "sum_quantity",
+          "type": "longSum",
+          "fieldName": "quantity"
+        },
+        {
+          "name": "sum_price",
+          "type": "doubleSum",
+          "fieldName": "price"
+        },
+        {
+          "name": "sum_total_price",
+          "type": "floatSum",
+          "fieldName": "total_price"
+        }
+      ]
+    }
+  }
+}
